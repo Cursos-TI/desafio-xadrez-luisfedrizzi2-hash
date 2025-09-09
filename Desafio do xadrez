@@ -1,0 +1,75 @@
+#include <stdio.h>
+
+#define SIZE 8
+
+void inicializarTabuleiro(char tabuleiro[SIZE][SIZE]) {
+    for(int i=0;i<SIZE;i++)
+        for(int j=0;j<SIZE;j++)
+            tabuleiro[i][j] = '.';
+}
+
+void imprimirTabuleiro(char tabuleiro[SIZE][SIZE]) {
+    for(int i=0;i<SIZE;i++){
+        for(int j=0;j<SIZE;j++)
+            printf("%c ", tabuleiro[i][j]);
+        printf("\n");
+    }
+}
+
+int movimentoValidoTorre(int x1,int y1,int x2,int y2){
+    return (x1==x2 || y1==y2);
+}
+
+int movimentoValidoBispo(int x1,int y1,int x2,int y2){
+    return (abs(x2-x1) == abs(y2-y1));
+}
+
+int movimentoValidoRainha(int x1,int y1,int x2,int y2){
+    return movimentoValidoTorre(x1,y1,x2,y2) || movimentoValidoBispo(x1,y1,x2,y2);
+}
+
+int main() {
+    char tabuleiro[SIZE][SIZE];
+    inicializarTabuleiro(tabuleiro);
+
+    // Posicionando peças iniciais
+    tabuleiro[0][0] = 'T'; // Torre
+    tabuleiro[0][2] = 'B'; // Bispo
+    tabuleiro[0][4] = 'Q'; // Rainha
+
+    int x1, y1, x2, y2;
+    char peca;
+
+    while(1){
+        imprimirTabuleiro(tabuleiro);
+        printf("Digite linha e coluna da peca e destino (x1 y1 x2 y2): ");
+        scanf("%d %d %d %d",&x1,&y1,&x2,&y2);
+
+        if(x1<0 || x1>=SIZE || y1<0 || y1>=SIZE || x2<0 || x2>=SIZE || y2<0 || y2>=SIZE){
+            printf("Coordenadas invalidas!\n");
+            continue;
+        }
+
+        peca = tabuleiro[x1][y1];
+
+        if(peca == '.'){
+            printf("Nao ha peca nessa posicao!\n");
+            continue;
+        }
+
+        int valido = 0;
+        if(peca == 'T') valido = movimentoValidoTorre(x1,y1,x2,y2);
+        else if(peca == 'B') valido = movimentoValidoBispo(x1,y1,x2,y2);
+        else if(peca == 'Q') valido = movimentoValidoRainha(x1,y1,x2,y2);
+
+        if(valido){
+            tabuleiro[x2][y2] = peca;
+            tabuleiro[x1][y1] = '.';
+            printf("Movimento realizado!\n");
+        } else {
+            printf("Movimento invalido!\n");
+        }
+    }
+
+    return 0;
+}
